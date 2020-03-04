@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="lotto_field_randomizer"
+        android:label="LottoFieldRandomizer"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
