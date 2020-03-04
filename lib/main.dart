@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
-import 'package:sensors/sensors.dart';
 
 void main() => runApp(MyApp());
 
@@ -66,8 +65,8 @@ class LottoField{
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<LottoField> lf = [];
+  TextEditingController superTC = new TextEditingController();
 
   @override
   initState() {
@@ -90,9 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
           lf[i].setTicked(false);
         }
       }
+      superTC.text = "";
 
       Random r = new Random();
-      for(int i = 0;i <= 6;i++){
+      for(int i = 0;i <= 5;i++){
         var result;
         do{
           result = r.nextInt(48);
@@ -100,6 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
         while(lf[result].isTicked());
         lf[result].setTicked(true);
       }
+
+      superTC.text = r.nextInt(9).toString();
     });
   }
 
@@ -111,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -1085,7 +1088,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 10.0),
-                  child: Text("made by Alexandra"),
+                  child: Text(
+                    "Superzahl",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  width: 50,
+                  child:TextField(
+                    controller: superTC,
+                    textAlign: TextAlign.center,
+                    enabled: false,
+                    style: TextStyle(fontSize: 30),
+                  ),
                 ),
               ],
             )
