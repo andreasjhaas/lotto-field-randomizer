@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lotto Field Rondomizer',
+      title: 'Lotto Field Randomizer',
       darkTheme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blueGrey,
       ),
-      home: MyHomePage(title: 'Lotto Field Rondomizer'),
+      home: MyHomePage(title: 'Lotto Field Randomizer'),
     );
   }
 }
