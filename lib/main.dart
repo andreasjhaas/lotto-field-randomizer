@@ -96,13 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
       for(int i = 0;i <= 5;i++){
         var result;
         do{
-          result = r.nextInt(48);
+          result = r.nextInt(49);
         }
         while(lf[result].isTicked());
         lf[result].setTicked(true);
       }
 
-      superTC.text = r.nextInt(9).toString();
+      superTC.text = r.nextInt(10).toString();
     });
   }
 
