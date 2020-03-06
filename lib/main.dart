@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
 
 void main() => runApp(MyApp());
@@ -84,7 +85,17 @@ class _MyHomePageState extends State<MyHomePage> {
     sd.startListening();
   }
 
+  static Future<void> vibrate() async {
+    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
+    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
+    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
+    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
+
+  }
+
   tickFields(){
+    vibrate();
+
     setState(() {
       for(int i = 0;i <= 48;i++){
         if(lf[i].isTicked()){
