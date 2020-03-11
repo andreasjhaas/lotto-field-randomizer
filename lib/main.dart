@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -71,31 +72,53 @@ class _MyHomePageState extends State<MyHomePage> {
   List<LottoField> lf = [];
   TextEditingController superTC = new TextEditingController();
 
+  Future _getData() async{
+    var _url = "http://swa14036:8080/";
+    Map<String, String> _headers = {"Content-type": "application/json"};
+    String _json;
+
+    await http.get(_url,headers: _headers).then((processValue){
+      var statusCode = processValue.statusCode;
+      setState(() {
+        if(statusCode == 200){
+          _json = processValue.body;
+          print(_json);
+        }
+        else{
+          _json = "HTTP statusCode: "+processValue.statusCode.toString();
+          print(_json);
+        }
+      });
+    }).catchError((handleError){
+      if(handleError.toString().contains("Connection refused") || handleError.toString().contains("Failed host lookup")) {
+        setState(() {
+          _json = "No connection";
+          print(_json);
+        });
+      }
+    });
+  }
+
   @override
   initState() {
     super.initState();
     for(int i = 0;i <= 48;i++){
       lf.add(LottoField(i+1,false));
     }
+
     ShakeDetector sd = ShakeDetector.waitForStart(
         onPhoneShake: () {
           tickFields();
         }
     );
     sd.startListening();
-  }
 
-  static Future<void> vibrate() async {
-    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
-    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
-    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
-    await SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
+    _getData();
 
   }
 
   tickFields(){
-    vibrate();
-
+    _getData();
     setState(() {
       for(int i = 0;i <= 48;i++){
         if(lf[i].isTicked()){
