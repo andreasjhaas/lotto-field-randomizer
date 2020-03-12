@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
-import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -73,26 +73,34 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController superTC = new TextEditingController();
 
   Future _getData() async{
-    var _url = "http://swa14036:8080/";
-    Map<String, String> _headers = {"Content-type": "application/json"};
+    var _url = "https://mdm.sw-aalen.de:8443/";
     String _json;
 
-    await http.get(_url,headers: _headers).then((processValue){
-      var statusCode = processValue.statusCode;
-      setState(() {
-        if(statusCode == 200){
-          _json = processValue.body;
-          print(_json);
-        }
-        else{
-          _json = "HTTP statusCode: "+processValue.statusCode.toString();
-          print(_json);
-        }
-      });
-    }).catchError((handleError){
-      if(handleError.toString().contains("Connection refused") || handleError.toString().contains("Failed host lookup")) {
+    HttpClient client = new HttpClient();
+    client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+
+    await client.getUrl(Uri.parse(_url)).then((request){
+      request.headers.set('content-type', 'application/json');
+      print("hallo");
+      return request.close();
+    }).then((response){
+      print("morgen");
+      return response.transform(utf8.decoder).join();
+    }).then((json){
+      _json = json;
+      Map<String, dynamic> user = jsonDecode(_json);
+      print(user['lottozahlen'][48]['zahl']);
+    }).timeout(const Duration(seconds: 10)).catchError((handleError){
+      print(handleError);
+      if(handleError.toString().contains("HttpException")){
         setState(() {
-          _json = "No connection";
+          _json = "Connection refused";
+          print(_json);
+        });
+      }
+      if(handleError.toString().contains("TimeoutException")){
+        setState(() {
+          _json = "Connection Timeout";
           print(_json);
         });
       }
