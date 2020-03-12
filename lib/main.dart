@@ -3,8 +3,23 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
+import 'package:bot_toast/bot_toast.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(Toast());
+
+class Toast extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BotToastInit(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'BotToast Demo',
+        navigatorObservers: [BotToastNavigatorObserver()],
+        home: MyApp(),
+      ),
+    );
+  }
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -73,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController superTC = new TextEditingController();
   String _jsonString = '{"lottozahlen":[{"zahl":"6","haeufigkeit":"100"},{"zahl":"32","haeufigkeit":"100"},{"zahl":"49","haeufigkeit":"100"},{"zahl":"38","haeufigkeit":"100"},{"zahl":"31","haeufigkeit":"100"},{"zahl":"26","haeufigkeit":"100"},{"zahl":"22","haeufigkeit":"100"},{"zahl":"33","haeufigkeit":"100"},{"zahl":"11","haeufigkeit":"100"},{"zahl":"42","haeufigkeit":"100"},{"zahl":"3","haeufigkeit":"100"},{"zahl":"43","haeufigkeit":"100"},{"zahl":"41","haeufigkeit":"100"},{"zahl":"25","haeufigkeit":"100"},{"zahl":"27","haeufigkeit":"100"},{"zahl":"36","haeufigkeit":"100"},{"zahl":"17","haeufigkeit":"100"},{"zahl":"9","haeufigkeit":"100"},{"zahl":"7","haeufigkeit":"100"},{"zahl":"29","haeufigkeit":"100"},{"zahl":"48","haeufigkeit":"100"},{"zahl":"47","haeufigkeit":"100"},{"zahl":"19","haeufigkeit":"100"},{"zahl":"4","haeufigkeit":"100"},{"zahl":"39","haeufigkeit":"100"},{"zahl":"37","haeufigkeit":"100"},{"zahl":"18","haeufigkeit":"100"},{"zahl":"1","haeufigkeit":"100"},{"zahl":"10","haeufigkeit":"100"},{"zahl":"24","haeufigkeit":"100"},{"zahl":"5","haeufigkeit":"100"},{"zahl":"2","haeufigkeit":"100"},{"zahl":"40","haeufigkeit":"100"},{"zahl":"16","haeufigkeit":"100"},{"zahl":"35","haeufigkeit":"100"},{"zahl":"34","haeufigkeit":"100"},{"zahl":"44","haeufigkeit":"100"},{"zahl":"30","haeufigkeit":"100"},{"zahl":"23","haeufigkeit":"100"},{"zahl":"46","haeufigkeit":"100"},{"zahl":"12","haeufigkeit":"100"},{"zahl":"14","haeufigkeit":"100"},{"zahl":"20","haeufigkeit":"100"},{"zahl":"15","haeufigkeit":"100"},{"zahl":"28","haeufigkeit":"100"},{"zahl":"21","haeufigkeit":"100"},{"zahl":"8","haeufigkeit":"100"},{"zahl":"45","haeufigkeit":"100"},{"zahl":"13","haeufigkeit":"100"}]}';
 
-
   Future _getData() async{
+    BotToast.showLoading();
     var _url = "https://mdm.sw-aalen.de/";
 
     HttpClient client = new HttpClient();
@@ -87,21 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
       return response.transform(utf8.decoder).join();
     }).then((json){
       _jsonString = json;
+      BotToast.showText(text:"Statistics loaded");
     }).timeout(const Duration(seconds: 10)).catchError((handleError){
       print(handleError);
-      if(handleError.toString().contains("HttpException")){
-        setState(() {
-          _jsonString = "Connection refused";
-          print(_jsonString);
-        });
-      }
-      if(handleError.toString().contains("TimeoutException")){
-        setState(() {
-          _jsonString = "Connection Timeout";
-          print(_jsonString);
-        });
-      }
+      BotToast.showText(text:"Statistics unavailable");
     });
+    BotToast.closeAllLoading();
   }
 
   @override
