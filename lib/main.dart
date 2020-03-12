@@ -1168,6 +1168,13 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _getData();
+        },
+        child: Icon(Icons.autorenew),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 }
