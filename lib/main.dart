@@ -71,37 +71,34 @@ class LottoField{
 class _MyHomePageState extends State<MyHomePage> {
   List<LottoField> lf = [];
   TextEditingController superTC = new TextEditingController();
+  String _jsonString = '{"lottozahlen":[{"zahl":"6","haeufigkeit":"100"},{"zahl":"32","haeufigkeit":"100"},{"zahl":"49","haeufigkeit":"100"},{"zahl":"38","haeufigkeit":"100"},{"zahl":"31","haeufigkeit":"100"},{"zahl":"26","haeufigkeit":"100"},{"zahl":"22","haeufigkeit":"100"},{"zahl":"33","haeufigkeit":"100"},{"zahl":"11","haeufigkeit":"100"},{"zahl":"42","haeufigkeit":"100"},{"zahl":"3","haeufigkeit":"100"},{"zahl":"43","haeufigkeit":"100"},{"zahl":"41","haeufigkeit":"100"},{"zahl":"25","haeufigkeit":"100"},{"zahl":"27","haeufigkeit":"100"},{"zahl":"36","haeufigkeit":"100"},{"zahl":"17","haeufigkeit":"100"},{"zahl":"9","haeufigkeit":"100"},{"zahl":"7","haeufigkeit":"100"},{"zahl":"29","haeufigkeit":"100"},{"zahl":"48","haeufigkeit":"100"},{"zahl":"47","haeufigkeit":"100"},{"zahl":"19","haeufigkeit":"100"},{"zahl":"4","haeufigkeit":"100"},{"zahl":"39","haeufigkeit":"100"},{"zahl":"37","haeufigkeit":"100"},{"zahl":"18","haeufigkeit":"100"},{"zahl":"1","haeufigkeit":"100"},{"zahl":"10","haeufigkeit":"100"},{"zahl":"24","haeufigkeit":"100"},{"zahl":"5","haeufigkeit":"100"},{"zahl":"2","haeufigkeit":"100"},{"zahl":"40","haeufigkeit":"100"},{"zahl":"16","haeufigkeit":"100"},{"zahl":"35","haeufigkeit":"100"},{"zahl":"34","haeufigkeit":"100"},{"zahl":"44","haeufigkeit":"100"},{"zahl":"30","haeufigkeit":"100"},{"zahl":"23","haeufigkeit":"100"},{"zahl":"46","haeufigkeit":"100"},{"zahl":"12","haeufigkeit":"100"},{"zahl":"14","haeufigkeit":"100"},{"zahl":"20","haeufigkeit":"100"},{"zahl":"15","haeufigkeit":"100"},{"zahl":"28","haeufigkeit":"100"},{"zahl":"21","haeufigkeit":"100"},{"zahl":"8","haeufigkeit":"100"},{"zahl":"45","haeufigkeit":"100"},{"zahl":"13","haeufigkeit":"100"}]}';
+
 
   Future _getData() async{
-    var _url = "https://mdm.sw-aalen.de:8443/";
-    String _json;
+    var _url = "https://mdm.sw-aalen.de/";
 
     HttpClient client = new HttpClient();
     client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
 
     await client.getUrl(Uri.parse(_url)).then((request){
       request.headers.set('content-type', 'application/json');
-      print("hallo");
       return request.close();
     }).then((response){
-      print("morgen");
       return response.transform(utf8.decoder).join();
     }).then((json){
-      _json = json;
-      Map<String, dynamic> user = jsonDecode(_json);
-      print(user['lottozahlen'][48]['zahl']);
+      _jsonString = json;
     }).timeout(const Duration(seconds: 10)).catchError((handleError){
       print(handleError);
       if(handleError.toString().contains("HttpException")){
         setState(() {
-          _json = "Connection refused";
-          print(_json);
+          _jsonString = "Connection refused";
+          print(_jsonString);
         });
       }
       if(handleError.toString().contains("TimeoutException")){
         setState(() {
-          _json = "Connection Timeout";
-          print(_json);
+          _jsonString = "Connection Timeout";
+          print(_jsonString);
         });
       }
     });
@@ -126,7 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   tickFields(){
-    _getData();
     setState(() {
       for(int i = 0;i <= 48;i++){
         if(lf[i].isTicked()){
@@ -135,16 +131,31 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       superTC.text = "";
 
-      Random r = new Random();
-      for(int i = 0;i <= 5;i++){
-        var result;
-        do{
-          result = r.nextInt(49);
-        }
-        while(lf[result].isTicked());
-        lf[result].setTicked(true);
+      Map<String, dynamic> _json = jsonDecode(_jsonString);
+      var result = 0;
+      for(var i = 0; i < _json['lottozahlen'].length; i++){
+        result = result + int.parse(_json['lottozahlen'][i]['haeufigkeit']);
       }
-
+      print("Max Range: "+result.toString());
+      Random r = new Random();
+      for(int i = 0;i < 6;i++){
+        var rResult;
+        var lz;
+        do{
+          rResult = r.nextInt(result);
+          print("rResult: "+rResult.toString());
+          var range = 0;
+          for(var i = 0; i < _json['lottozahlen'].length; i++){
+            print("Zwischen "+range.toString()+" und "+(range + int.parse(_json['lottozahlen'][i]['haeufigkeit'])).toString()+" entspricht Lotto Zahl "+_json['lottozahlen'][i]['zahl'].toString());
+            if(rResult > range && rResult < (range + int.parse(_json['lottozahlen'][i]['haeufigkeit']))){
+              lz = i;
+            }
+            range = range + int.parse(_json['lottozahlen'][i]['haeufigkeit']);
+          }
+        }
+        while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])].isTicked());
+        lf[int.parse(_json['lottozahlen'][lz]['zahl'])].setTicked(true);
+      }
       superTC.text = r.nextInt(10).toString();
     });
   }
