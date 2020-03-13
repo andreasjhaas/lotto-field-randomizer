@@ -159,8 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
             range = range + int.parse(_json['lottozahlen'][i]['haeufigkeit']);
           }
         }
-        while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])].isTicked());
-        lf[int.parse(_json['lottozahlen'][lz]['zahl'])].setTicked(true);
+        while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].isTicked());
+        lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].setTicked(true);
       }
       superTC.text = r.nextInt(10).toString();
     });
