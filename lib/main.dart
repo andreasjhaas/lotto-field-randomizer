@@ -1177,8 +1177,9 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ),
       ),
-      floatingActionButton: Visibility(
-        visible: reloadButton,
+      floatingActionButton: AnimatedOpacity(
+        opacity: reloadButton ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 500),
         child: FloatingActionButton(
           onPressed: () {
             _getData();
