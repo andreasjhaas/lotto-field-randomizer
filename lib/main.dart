@@ -169,18 +169,17 @@ class _MyHomePageState extends State<MyHomePage> {
         var rResult;
         var lz;
         do{
-          rResult = r.nextInt(result);
+          rResult = r.nextInt(result+1);
           print("rResult: "+rResult.toString());
           var range = 0;
           for(var i = 0; i < _json['lottozahlen'].length; i++){
-            print("Zwischen "+range.toString()+" und "+(range + int.parse(_json['lottozahlen'][i]['haeufigkeit'])).toString()+" entspricht Lotto Zahl "+_json['lottozahlen'][i]['zahl'].toString());
-            if(rResult > range && rResult < (range + int.parse(_json['lottozahlen'][i]['haeufigkeit']))){
+            print("Zwischen "+(range+1).toString()+" und "+(range + int.parse(_json['lottozahlen'][i]['haeufigkeit'])).toString()+" entspricht Lotto Zahl "+_json['lottozahlen'][i]['zahl'].toString());
+            if(rResult > range && rResult <= (range + int.parse(_json['lottozahlen'][i]['haeufigkeit']))){
               lz = i;
             }
             range = range + int.parse(_json['lottozahlen'][i]['haeufigkeit']);
           }
-        }
-        while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].isTicked());
+        }while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].isTicked());
         lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].setTicked(true);
       }
       superTC.text = r.nextInt(10).toString();
