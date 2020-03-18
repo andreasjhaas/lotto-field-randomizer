@@ -90,12 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
   List<LottoField> lf = [];
   TextEditingController superTC = new TextEditingController();
   String _jsonString = '{"lottozahlen":[{"zahl":"6","haeufigkeit":"100"},{"zahl":"32","haeufigkeit":"100"},{"zahl":"49","haeufigkeit":"100"},{"zahl":"38","haeufigkeit":"100"},{"zahl":"31","haeufigkeit":"100"},{"zahl":"26","haeufigkeit":"100"},{"zahl":"22","haeufigkeit":"100"},{"zahl":"33","haeufigkeit":"100"},{"zahl":"11","haeufigkeit":"100"},{"zahl":"42","haeufigkeit":"100"},{"zahl":"3","haeufigkeit":"100"},{"zahl":"43","haeufigkeit":"100"},{"zahl":"41","haeufigkeit":"100"},{"zahl":"25","haeufigkeit":"100"},{"zahl":"27","haeufigkeit":"100"},{"zahl":"36","haeufigkeit":"100"},{"zahl":"17","haeufigkeit":"100"},{"zahl":"9","haeufigkeit":"100"},{"zahl":"7","haeufigkeit":"100"},{"zahl":"29","haeufigkeit":"100"},{"zahl":"48","haeufigkeit":"100"},{"zahl":"47","haeufigkeit":"100"},{"zahl":"19","haeufigkeit":"100"},{"zahl":"4","haeufigkeit":"100"},{"zahl":"39","haeufigkeit":"100"},{"zahl":"37","haeufigkeit":"100"},{"zahl":"18","haeufigkeit":"100"},{"zahl":"1","haeufigkeit":"100"},{"zahl":"10","haeufigkeit":"100"},{"zahl":"24","haeufigkeit":"100"},{"zahl":"5","haeufigkeit":"100"},{"zahl":"2","haeufigkeit":"100"},{"zahl":"40","haeufigkeit":"100"},{"zahl":"16","haeufigkeit":"100"},{"zahl":"35","haeufigkeit":"100"},{"zahl":"34","haeufigkeit":"100"},{"zahl":"44","haeufigkeit":"100"},{"zahl":"30","haeufigkeit":"100"},{"zahl":"23","haeufigkeit":"100"},{"zahl":"46","haeufigkeit":"100"},{"zahl":"12","haeufigkeit":"100"},{"zahl":"14","haeufigkeit":"100"},{"zahl":"20","haeufigkeit":"100"},{"zahl":"15","haeufigkeit":"100"},{"zahl":"28","haeufigkeit":"100"},{"zahl":"21","haeufigkeit":"100"},{"zahl":"8","haeufigkeit":"100"},{"zahl":"45","haeufigkeit":"100"},{"zahl":"13","haeufigkeit":"100"}]}';
-  bool reloadButton = false;
+  bool showReloadButton = false;
 
-  Future _getData() async{
+  _callWebservice() async{
     BotToast.showLoading();
-    var _url = "https://mdm.sw-aalen.de/";
 
+    var _url = "https://mdm.sw-aalen.de/";
     HttpClient client = new HttpClient();
     client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
 
@@ -107,16 +107,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }).then((json){
       _jsonString = json;
       setState(() {
-        reloadButton = false;
+        showReloadButton = false;
       });
       BotToast.showText(text:"Statistics loaded");
+
     }).timeout(const Duration(seconds: 10)).catchError((handleError){
       print(handleError);
       setState(() {
-        reloadButton = true;
+        showReloadButton = true;
       });
       BotToast.showText(text:"Statistics unavailable");
     });
+
     BotToast.closeAllLoading();
   }
 
@@ -135,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
     sd.startListening();
 
     setState(() {
-      _getData();
+      _callWebservice();
     });
 
   }
@@ -1041,11 +1043,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: AnimatedOpacity(
-        opacity: reloadButton ? 1.0 : 0.0,
+        opacity: showReloadButton ? 1.0 : 0.0,
         duration: Duration(milliseconds: 500),
         child: FloatingActionButton(
-          onPressed: () {
-            _getData();
+          onPressed: !showReloadButton ? null : () {
+            _callWebservice();
           },
           child: Icon(Icons.autorenew),
           backgroundColor: Colors.green,
