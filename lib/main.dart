@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:vibration/vibration.dart';
 
 void main() => runApp(Toast());
 
@@ -137,7 +138,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+  vibratePhone() async{
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 300);
+    }
+  }
+
   tickFields(){
+    vibratePhone();
     setState(() {
       for(int i = 0;i <= 48;i++){
         if(lf[i].isTicked()){
