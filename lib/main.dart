@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lotto Field Randomizer',
-      darkTheme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
@@ -40,7 +39,10 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blueGrey,
+        brightness: Brightness.dark,
+        primaryColor: Colors.lightGreen,
+        //accentColor: Colors.lightGreen,
+        buttonColor: Colors.lightGreen,
       ),
       home: MyHomePage(title: 'Lotto Field Randomizer'),
     );
@@ -216,11 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[0].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[0].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -235,11 +234,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[1].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[1].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -254,11 +250,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[2].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[2].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -273,11 +266,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[3].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[3].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -292,11 +282,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[4].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[4].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -311,11 +298,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[5].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[5].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -330,11 +314,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[6].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[6].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -353,11 +334,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[7].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[7].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -372,11 +350,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[8].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[8].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -391,11 +366,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[9].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[9].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -410,11 +382,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[10].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[10].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -429,11 +398,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[11].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[11].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -448,11 +414,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[12].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[12].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -467,11 +430,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[13].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[13].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -490,11 +450,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[14].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[14].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -509,11 +466,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[15].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[15].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -528,11 +482,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[16].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[16].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -547,11 +498,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[17].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[17].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -566,11 +514,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[18].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[18].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -585,11 +530,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[19].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[19].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -604,11 +546,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[20].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[20].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -627,11 +566,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[21].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[21].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -646,11 +582,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[22].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[22].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -665,11 +598,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[23].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[23].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -684,11 +614,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[24].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[24].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -703,11 +630,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[25].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[25].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -722,11 +646,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[26].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[26].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -741,11 +662,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[27].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[27].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -764,11 +682,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[28].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[28].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -783,11 +698,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[29].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[29].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -802,11 +714,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[30].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[30].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -821,11 +730,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[31].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[31].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -840,11 +746,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[32].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[32].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -859,11 +762,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[33].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[33].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -878,11 +778,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[34].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[34].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -901,11 +798,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[35].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[35].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -920,11 +814,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[36].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[36].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -939,11 +830,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[37].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[37].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -958,11 +846,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[38].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[38].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -977,11 +862,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[39].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[39].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -996,11 +878,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[40].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[40].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1015,11 +894,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[41].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[41].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1038,11 +914,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[42].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[42].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1057,11 +930,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[43].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[43].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1076,11 +946,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[44].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[44].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1095,11 +962,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[45].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[45].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1114,11 +978,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[46].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[46].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1133,11 +994,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[47].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[47].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
@@ -1152,11 +1010,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Center(
                             child: Checkbox(
                               value: lf[48].isTicked(),
-                              onChanged: (bool value) {
-                                setState(() {
-                                  lf[48].setTicked(value);
-                                });
-                              },
+                              checkColor: Colors.lightGreen,
+                              onChanged: null,
                             ),
                           ),
                         ],
