@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:LottoFieldRandomizer/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -41,13 +42,16 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         brightness: Brightness.dark,
         primaryColor: Colors.lightGreen,
-        //accentColor: Colors.lightGreen,
         buttonColor: Colors.lightGreen,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.lightGreen,
+        ),
       ),
       home: MyHomePage(title: 'Lotto Field Randomizer'),
     );
   }
 }
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -86,11 +90,78 @@ class LottoField{
 
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class TypewriterTween extends Tween<String> {
+  TypewriterTween({String begin = '', String end})
+      : super(begin: begin, end: end);
+
+  String lerp(double t) {
+    var cutoff = (end.length * t).round();
+    return end.substring(0, cutoff);
+  }
+}
+
+class LottoFields extends StatefulWidget{
+  const LottoFields({ Key key, this.lf }) : super(key: key);
+
+  final List<LottoField> lf;
+
+  @override
+  _LottoFieldsState createState() => _LottoFieldsState(lf);
+}
+
+class _LottoFieldsState extends State<LottoFields> {
+  List<LottoField> lf;
+
+  _LottoFieldsState(List<LottoField> lf){
+    this.lf = lf;
+  }
+
+  initState() {
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: List.generate(7,(index){
+        return Row(
+          children: List.generate(7,(index2){
+            return Expanded(
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                    child: Text(lf[(index*7)+index2].getNumber().toString()),
+                  ),
+                  Center(
+                    child: Checkbox(
+                      value: lf[(index*7)+index2].isTicked(),
+                      checkColor: Colors.lightGreen,
+                      onChanged: null,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        );
+      }),
+    );
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
   List<LottoField> lf = [];
   TextEditingController superTC = new TextEditingController();
   String _jsonString = '{"lottozahlen":[{"zahl":"6","haeufigkeit":"100"},{"zahl":"32","haeufigkeit":"100"},{"zahl":"49","haeufigkeit":"100"},{"zahl":"38","haeufigkeit":"100"},{"zahl":"31","haeufigkeit":"100"},{"zahl":"26","haeufigkeit":"100"},{"zahl":"22","haeufigkeit":"100"},{"zahl":"33","haeufigkeit":"100"},{"zahl":"11","haeufigkeit":"100"},{"zahl":"42","haeufigkeit":"100"},{"zahl":"3","haeufigkeit":"100"},{"zahl":"43","haeufigkeit":"100"},{"zahl":"41","haeufigkeit":"100"},{"zahl":"25","haeufigkeit":"100"},{"zahl":"27","haeufigkeit":"100"},{"zahl":"36","haeufigkeit":"100"},{"zahl":"17","haeufigkeit":"100"},{"zahl":"9","haeufigkeit":"100"},{"zahl":"7","haeufigkeit":"100"},{"zahl":"29","haeufigkeit":"100"},{"zahl":"48","haeufigkeit":"100"},{"zahl":"47","haeufigkeit":"100"},{"zahl":"19","haeufigkeit":"100"},{"zahl":"4","haeufigkeit":"100"},{"zahl":"39","haeufigkeit":"100"},{"zahl":"37","haeufigkeit":"100"},{"zahl":"18","haeufigkeit":"100"},{"zahl":"1","haeufigkeit":"100"},{"zahl":"10","haeufigkeit":"100"},{"zahl":"24","haeufigkeit":"100"},{"zahl":"5","haeufigkeit":"100"},{"zahl":"2","haeufigkeit":"100"},{"zahl":"40","haeufigkeit":"100"},{"zahl":"16","haeufigkeit":"100"},{"zahl":"35","haeufigkeit":"100"},{"zahl":"34","haeufigkeit":"100"},{"zahl":"44","haeufigkeit":"100"},{"zahl":"30","haeufigkeit":"100"},{"zahl":"23","haeufigkeit":"100"},{"zahl":"46","haeufigkeit":"100"},{"zahl":"12","haeufigkeit":"100"},{"zahl":"14","haeufigkeit":"100"},{"zahl":"20","haeufigkeit":"100"},{"zahl":"15","haeufigkeit":"100"},{"zahl":"28","haeufigkeit":"100"},{"zahl":"21","haeufigkeit":"100"},{"zahl":"8","haeufigkeit":"100"},{"zahl":"45","haeufigkeit":"100"},{"zahl":"13","haeufigkeit":"100"}]}';
-  bool showReloadButton = true;
+  bool isStatisticsLoaded = false;
+  var statisticText = "load statistic";
+  static const Duration _duration = Duration(milliseconds: 500);
+  AnimationController controller;
+  Animation<String> animation;
+  bool _visible = false;
 
   _callWebservice() async{
     BotToast.showLoading();
@@ -106,27 +177,42 @@ class _MyHomePageState extends State<MyHomePage> {
       return response.transform(utf8.decoder).join();
     }).then((json){
       _jsonString = json;
-      setState(() {
-        showReloadButton = false;
-      });
+      isStatisticsLoaded = true;
       BotToast.showText(text:"Statistics loaded");
+      statisticText = "show statistic";
+      _reloadFAB();
 
     }).timeout(const Duration(seconds: 10)).catchError((handleError){
       print(handleError);
-      setState(() {
-        showReloadButton = true;
-      });
+      isStatisticsLoaded = false;
       BotToast.showText(text:"Statistics unavailable");
     });
 
     BotToast.closeAllLoading();
   }
 
+  _reloadFAB() async{
+    animation = TypewriterTween(end: statisticText).animate(controller);
+    await controller.reverse().whenComplete(() {
+      setState(() {});
+    });
+    await controller.forward().whenComplete(() {
+      setState(() {});
+    });
+  }
+
+  _loadUI() async{
+    await Future.delayed(const Duration(seconds: 1), (){setState(() {
+      _visible = true;
+    });});
+    await Future.delayed(const Duration(seconds: 1), (){_reloadFAB();});
+  }
+
   @override
-  initState() {
+  initState(){
     super.initState();
-    for(int i = 0;i <= 48;i++){
-      lf.add(LottoField(i+1,false));
+    for (int i = 0; i <= 48; i++) {
+      lf.add(LottoField(i + 1, false));
     }
 
     ShakeDetector sd = ShakeDetector.waitForStart(
@@ -136,6 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     sd.startListening();
 
+    controller = AnimationController(vsync: this, duration: _duration);
+    animation = TypewriterTween(end: statisticText).animate(controller);
+
+    _loadUI();
   }
 
   vibratePhone() async{
@@ -184,838 +274,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 15.0),
         child: SingleChildScrollView(
+          child: AnimatedOpacity(
+            opacity: _visible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 1500),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[0].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[0].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[1].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[1].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[2].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[2].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[3].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[3].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[4].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[4].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[5].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[5].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[6].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[6].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[7].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[7].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[8].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[8].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[9].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[9].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[10].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[10].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[11].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[11].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[12].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[12].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[13].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[13].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[14].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[14].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[15].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[15].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[16].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[16].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[17].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[17].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[18].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[18].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[19].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[19].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[20].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[20].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[21].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[21].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[22].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[22].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[23].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[23].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[24].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[24].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[25].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[25].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[26].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[26].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[27].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[27].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[28].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[28].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[29].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[29].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[30].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[30].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[31].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[31].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[32].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[32].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[33].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[33].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[34].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[34].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[35].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[35].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[36].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[36].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[37].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[37].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[38].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[38].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[39].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[39].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[40].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[40].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[41].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[41].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[42].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[42].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[43].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[43].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[44].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[44].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[45].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[45].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[46].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[46].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[47].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[47].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Text(lf[48].getNumber().toString()),
-                          ),
-                          Center(
-                            child: Checkbox(
-                              value: lf[48].isTicked(),
-                              checkColor: Colors.lightGreen,
-                              onChanged: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                LottoFields(lf: lf),
                 Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Text(
@@ -1034,19 +307,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ],
-            )
+            ),
+          ),
         ),
       ),
       floatingActionButton: AnimatedOpacity(
-        opacity: showReloadButton ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
-        child: FloatingActionButton(
-          onPressed: !showReloadButton ? null : () {
+        opacity: _visible ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 1000),
+        child:FloatingActionButton.extended(
+          onPressed: isStatisticsLoaded ? () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Statistics(_jsonString)),
+            );
+          } : () {
             _callWebservice();
           },
-          child: Icon(Icons.autorenew),
-          backgroundColor: Colors.green,
-          tooltip: "Import statistics",
+          icon: Icon(isStatisticsLoaded ? Icons.assignment : Icons.autorenew),
+          label: AnimatedBuilder(
+            animation: animation,
+            builder: (context, child) {
+              return Text('${animation.value}',
+                  style: TextStyle(fontSize: 18));
+            },
+          ),
+          tooltip: isStatisticsLoaded ? "import statistics" : "show statistics",
         ),
       ),
     );
