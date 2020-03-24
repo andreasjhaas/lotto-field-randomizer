@@ -15,7 +15,6 @@ class Toast extends StatelessWidget {
     return BotToastInit(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'BotToast Demo',
         navigatorObservers: [BotToastNavigatorObserver()],
         home: MyApp(),
       ),
@@ -24,25 +23,19 @@ class Toast extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lotto Field Randomizer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         brightness: Brightness.dark,
         primaryColor: Colors.lightGreen,
         buttonColor: Colors.lightGreen,
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.lightGreen,
+          textTheme: ButtonTextTheme.primary
+        ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.lightGreen,
         ),
@@ -54,15 +47,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -87,7 +71,6 @@ class LottoField{
   getNumber(){
     return number;
   }
-
 }
 
 class TypewriterTween extends Tween<String> {
@@ -118,7 +101,6 @@ class _LottoFieldsState extends State<LottoFields> {
 
   initState() {
     super.initState();
-
   }
 
   @override
@@ -154,14 +136,16 @@ class _LottoFieldsState extends State<LottoFields> {
 
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
   List<LottoField> lf = [];
+
   TextEditingController superTC = new TextEditingController();
   String _jsonString = '{"lottozahlen":[{"zahl":"6","haeufigkeit":"100"},{"zahl":"32","haeufigkeit":"100"},{"zahl":"49","haeufigkeit":"100"},{"zahl":"38","haeufigkeit":"100"},{"zahl":"31","haeufigkeit":"100"},{"zahl":"26","haeufigkeit":"100"},{"zahl":"22","haeufigkeit":"100"},{"zahl":"33","haeufigkeit":"100"},{"zahl":"11","haeufigkeit":"100"},{"zahl":"42","haeufigkeit":"100"},{"zahl":"3","haeufigkeit":"100"},{"zahl":"43","haeufigkeit":"100"},{"zahl":"41","haeufigkeit":"100"},{"zahl":"25","haeufigkeit":"100"},{"zahl":"27","haeufigkeit":"100"},{"zahl":"36","haeufigkeit":"100"},{"zahl":"17","haeufigkeit":"100"},{"zahl":"9","haeufigkeit":"100"},{"zahl":"7","haeufigkeit":"100"},{"zahl":"29","haeufigkeit":"100"},{"zahl":"48","haeufigkeit":"100"},{"zahl":"47","haeufigkeit":"100"},{"zahl":"19","haeufigkeit":"100"},{"zahl":"4","haeufigkeit":"100"},{"zahl":"39","haeufigkeit":"100"},{"zahl":"37","haeufigkeit":"100"},{"zahl":"18","haeufigkeit":"100"},{"zahl":"1","haeufigkeit":"100"},{"zahl":"10","haeufigkeit":"100"},{"zahl":"24","haeufigkeit":"100"},{"zahl":"5","haeufigkeit":"100"},{"zahl":"2","haeufigkeit":"100"},{"zahl":"40","haeufigkeit":"100"},{"zahl":"16","haeufigkeit":"100"},{"zahl":"35","haeufigkeit":"100"},{"zahl":"34","haeufigkeit":"100"},{"zahl":"44","haeufigkeit":"100"},{"zahl":"30","haeufigkeit":"100"},{"zahl":"23","haeufigkeit":"100"},{"zahl":"46","haeufigkeit":"100"},{"zahl":"12","haeufigkeit":"100"},{"zahl":"14","haeufigkeit":"100"},{"zahl":"20","haeufigkeit":"100"},{"zahl":"15","haeufigkeit":"100"},{"zahl":"28","haeufigkeit":"100"},{"zahl":"21","haeufigkeit":"100"},{"zahl":"8","haeufigkeit":"100"},{"zahl":"45","haeufigkeit":"100"},{"zahl":"13","haeufigkeit":"100"}]}';
-  bool isStatisticsLoaded = false;
-  var statisticText = "load statistic";
-  static const Duration _duration = Duration(milliseconds: 500);
+  String _statisticText = "load statistic";
+
+  bool _isStatisticsLoaded = false;
+  bool _isUIVisible = false;
+
   AnimationController controller;
   Animation<String> animation;
-  bool _visible = false;
 
   _callWebservice() async{
     BotToast.showLoading();
@@ -177,14 +161,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       return response.transform(utf8.decoder).join();
     }).then((json){
       _jsonString = json;
-      isStatisticsLoaded = true;
+      _isStatisticsLoaded = true;
       BotToast.showText(text:"Statistics loaded");
-      statisticText = "show statistic";
+      _statisticText = "show statistic";
       _reloadFAB();
 
     }).timeout(const Duration(seconds: 10)).catchError((handleError){
       print(handleError);
-      isStatisticsLoaded = false;
+      _isStatisticsLoaded = false;
       BotToast.showText(text:"Statistics unavailable");
     });
 
@@ -192,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   _reloadFAB() async{
-    animation = TypewriterTween(end: statisticText).animate(controller);
+    animation = TypewriterTween(end: _statisticText).animate(controller);
     await controller.reverse().whenComplete(() {
       setState(() {});
     });
@@ -203,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   _loadUI() async{
     await Future.delayed(const Duration(seconds: 1), (){setState(() {
-      _visible = true;
+      _isUIVisible = true;
     });});
     await Future.delayed(const Duration(seconds: 1), (){_reloadFAB();});
   }
@@ -214,7 +198,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     for (int i = 0; i <= 48; i++) {
       lf.add(LottoField(i + 1, false));
     }
-
     ShakeDetector sd = ShakeDetector.waitForStart(
         onPhoneShake: () {
           tickFields();
@@ -222,8 +205,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     );
     sd.startListening();
 
-    controller = AnimationController(vsync: this, duration: _duration);
-    animation = TypewriterTween(end: statisticText).animate(controller);
+    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    animation = TypewriterTween(end: _statisticText).animate(controller);
 
     _loadUI();
   }
@@ -242,7 +225,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           lf[i].setTicked(false);
         }
       }
-      superTC.text = "";
 
       Map<String, dynamic> _json = jsonDecode(_jsonString);
       var maxRange = 0;
@@ -268,8 +250,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         }while(lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].isTicked());
         lf[int.parse(_json['lottozahlen'][lz]['zahl'])-1].setTicked(true);
       }
-      superTC.text = r.nextInt(10).toString();
     });
+  }
+
+  setSuperN(){
+    Random r = new Random();
+    superTC.text = r.nextInt(10).toString();
+    vibratePhone();
   }
 
   @override
@@ -282,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         padding: EdgeInsets.only(top: 15.0),
         child: SingleChildScrollView(
           child: AnimatedOpacity(
-            opacity: _visible ? 1.0 : 0.0,
+            opacity: _isUIVisible ? 1.0 : 0.0,
             duration: Duration(milliseconds: 1500),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -290,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               children: <Widget>[
                 LottoFields(lf: lf),
                 Padding(
-                  padding: EdgeInsets.only(top: 10.0),
+                  padding: EdgeInsets.only(top: 50.0),
                   child: Text(
                     "Superzahl",
                     style: TextStyle(fontSize: 18),
@@ -306,16 +293,28 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child:RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10),
+                    ),
+                    child: Text("pick",style: TextStyle(fontSize: 18)),
+                    onPressed: (){
+                      setSuperN();
+                    },
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
       floatingActionButton: AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
+        opacity: _isUIVisible ? 1.0 : 0.0,
         duration: Duration(milliseconds: 1000),
         child:FloatingActionButton.extended(
-          onPressed: isStatisticsLoaded ? () {
+          onPressed: _isStatisticsLoaded ? () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Statistics(_jsonString)),
@@ -323,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           } : () {
             _callWebservice();
           },
-          icon: Icon(isStatisticsLoaded ? Icons.assignment : Icons.autorenew),
+          icon: Icon(_isStatisticsLoaded ? Icons.assignment : Icons.autorenew),
           label: AnimatedBuilder(
             animation: animation,
             builder: (context, child) {
@@ -331,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   style: TextStyle(fontSize: 18));
             },
           ),
-          tooltip: isStatisticsLoaded ? "import statistics" : "show statistics",
+          tooltip: _isStatisticsLoaded ? "show statistics" : "import statistics",
         ),
       ),
     );

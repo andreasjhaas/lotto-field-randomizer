@@ -33,7 +33,6 @@ class Page extends StatefulWidget {
 }
 
 class _PageState extends State<Page> {
-
   String _jsonString;
   static List<LottoNumberModel> initialListData = [];
 
@@ -70,34 +69,12 @@ class _PageState extends State<Page> {
     });
   }
 
-  void deleteUser(int index) {
-    setState(() {
-      var user = listData.removeAt(index);
-      _listKey.currentState.removeItem(
-        index,
-            (context, animation) {
-          return FadeTransition(
-            opacity:
-            CurvedAnimation(parent: animation, curve: Interval(0.5, 1.0)),
-            child: SizeTransition(
-              sizeFactor:
-              CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
-              axisAlignment: 0.0,
-              child: _buildItem(user),
-            ),
-          );
-        },
-        duration: Duration(milliseconds: 600),
-      );
-    });
-  }
-
   Widget _buildItem(LottoNumberModel user, [int index]) {
     return ListTile(
       key: ValueKey<LottoNumberModel>(user),
       title: Text("Number: "+user.number),
       subtitle: Text("Frequency: "+user.frequency),
-      //onLongPress: () => deleteUser(index),
+      onLongPress: () => null,
     );
   }
 
