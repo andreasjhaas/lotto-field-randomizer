@@ -35,7 +35,7 @@ packages:
       name: bot_toast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   charcode:
     dependency: transitive
     description:
@@ -101,7 +101,7 @@ packages:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.3"
+    version: "3.1.4"
   image:
     dependency: transitive
     description:
@@ -157,7 +157,7 @@ packages:
       name: sensors
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.1+7"
+    version: "0.4.1+10"
   shake:
     dependency: "direct main"
     description:

@@ -277,14 +277,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               children: <Widget>[
                 LottoFields(lf: lf),
                 Padding(
-                  padding: EdgeInsets.only(top: 50.0),
+                  padding: EdgeInsets.only(top: 10.0),
                   child: Text(
                     "Superzahl",
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 10.0),
                   width: 50,
                   child:TextField(
                     controller: superTC,
