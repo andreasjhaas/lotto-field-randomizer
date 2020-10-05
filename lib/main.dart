@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:vibration/vibration.dart';
@@ -27,17 +28,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.lightGreen,
-        buttonColor: Colors.lightGreen,
+        primaryColor: Colors.purple,
+        buttonColor: Colors.purple,
         buttonTheme: ButtonThemeData(
-          buttonColor: Colors.lightGreen,
+          buttonColor: Colors.purple,
           textTheme: ButtonTextTheme.primary
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.lightGreen,
+          backgroundColor: Colors.purple,
         ),
       ),
-      home: MyHomePage(title: 'Lotto Field Randomizer'),
+      home: MyHomePage(title: 'Purple Juice'),
     );
   }
 }
@@ -117,7 +118,7 @@ class _LottoFieldsState extends State<LottoFields> {
                   Center(
                     child: Checkbox(
                       value: lf[(index*7)+index2].isTicked(),
-                      checkColor: Colors.lightGreen,
+                      checkColor: Colors.purple,
                       onChanged: null,
                     ),
                   ),
@@ -142,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   Animation<String> animation;
 
 
+
   _loadUI() async{
     await Future.delayed(const Duration(seconds: 1), (){setState(() {
       _isUIVisible = true;
@@ -151,6 +153,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   initState(){
     super.initState();
+
     for (int i = 0; i <= 48; i++) {
       lf.add(LottoField(i + 1, false));
     }
@@ -203,6 +206,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        centerTitle: true,
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 15.0),
@@ -240,6 +244,18 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     child: Text("pick",style: TextStyle(fontSize: 18)),
                     onPressed: (){
                       setSuperN();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child:RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10),
+                    ),
+                    child: Text("randomize",style: TextStyle(fontSize: 18)),
+                    onPressed: (){
+                      tickFields();
                     },
                   ),
                 ),
