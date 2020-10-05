@@ -140,9 +140,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   bool _isUIVisible = false;
 
   AnimationController controller;
-  Animation<String> animation;
-
-
+  Animation<double> animation;
 
   _loadUI() async{
     await Future.delayed(const Duration(seconds: 1), (){setState(() {
@@ -154,6 +152,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   initState(){
     super.initState();
 
+    controller = new AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1500),
+    );
+
+    animation = controller;
     for (int i = 0; i <= 48; i++) {
       lf.add(LottoField(i + 1, false));
     }
@@ -228,11 +232,16 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 ),
                 Container(
                   width: 50,
-                  child:TextField(
-                    controller: superTC,
-                    textAlign: TextAlign.center,
-                    enabled: false,
-                    style: TextStyle(fontSize: 30),
+                  child: AnimatedBuilder(
+                    animation: animation,
+                    builder: (BuildContext context, Widget child){
+                      return TextField(
+                        controller: superTC,
+                        textAlign: TextAlign.center,
+                        enabled: false,
+                        style: TextStyle(fontSize: 30),
+                      );
+                    },
                   ),
                 ),
                 Container(
