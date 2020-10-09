@@ -71,16 +71,6 @@ class LottoField{
   }
 }
 
-class TypewriterTween extends Tween<String> {
-  TypewriterTween({String begin = '', String end})
-      : super(begin: begin, end: end);
-
-  String lerp(double t) {
-    var cutoff = (end.length * t).round();
-    return end.substring(0, cutoff);
-  }
-}
-
 class LottoFields extends StatefulWidget{
   const LottoFields({ Key key, this.lf }) : super(key: key);
 
@@ -141,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   AnimationController controller;
   Animation<double> animation;
+  double sNumber;
 
   _loadUI() async{
     await Future.delayed(const Duration(seconds: 1), (){setState(() {
@@ -156,8 +147,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         vsync: this,
         duration: const Duration(milliseconds: 1500),
     );
-
     animation = controller;
+
     for (int i = 0; i <= 48; i++) {
       lf.add(LottoField(i + 1, false));
     }
@@ -173,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   vibratePhone() async{
     if (await Vibration.hasVibrator()) {
-      Vibration.vibrate(duration: 300);
+      Vibration.vibrate(duration: 100);
     }
   }
 
@@ -185,24 +176,58 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           lf[i].setTicked(false);
         }
       }
-
       Random r = new Random();
       int counter = 0;
+
       do{
         int result = r.nextInt(49);
         if(!lf[result].isTicked()){
           lf[result].setTicked(true);
           counter++;
         }
+
       }while(counter<6);
 
     });
   }
 
   setSuperN(){
-    Random r = new Random();
-    superTC.text = r.nextInt(10).toString();
     vibratePhone();
+
+    Random rng = new Random();
+    sNumber = rng.nextInt(10) + 0.0;
+
+    animation = new Tween<double>(
+      begin: animation.value,
+      end: 0,
+    ).animate(new CurvedAnimation(
+      curve: Curves.fastOutSlowIn,
+      parent: controller,
+    ));
+    controller.forward(from: 0.0);
+
+    Future.delayed(const Duration(milliseconds: 1500), (){setState(() {
+      animation = new Tween<double>(
+        begin: animation.value,
+        end: 9,
+      ).animate(new CurvedAnimation(
+        curve: Curves.fastOutSlowIn,
+        parent: controller,
+      ));
+      controller.forward(from: 0.0);
+
+      Future.delayed(const Duration(milliseconds: 1500), (){setState(() {
+        animation = new Tween<double>(
+          begin: animation.value,
+          end: sNumber,
+        ).animate(new CurvedAnimation(
+          curve: Curves.fastOutSlowIn,
+          parent: controller,
+        ));
+        controller.forward(from: 0.0);
+      });});
+    });});
+
   }
 
   @override
@@ -223,24 +248,15 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 LottoFields(lf: lf),
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0),
-                  child: Text(
-                    "Superzahl",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
                 Container(
-                  width: 50,
-                  child: AnimatedBuilder(
-                    animation: animation,
-                    builder: (BuildContext context, Widget child){
-                      return TextField(
-                        controller: superTC,
-                        textAlign: TextAlign.center,
-                        enabled: false,
-                        style: TextStyle(fontSize: 30),
-                      );
+                  padding: EdgeInsets.only(top: 10.0,),
+                  child:RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10),
+                    ),
+                    child: Text("Felder",style: TextStyle(fontSize: 18)),
+                    onPressed: (){
+                      tickFields();
                     },
                   ),
                 ),
@@ -250,21 +266,21 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10),
                     ),
-                    child: Text("pick",style: TextStyle(fontSize: 18)),
+                    child: Text("Superzahl",style: TextStyle(fontSize: 18)),
                     onPressed: (){
                       setSuperN();
                     },
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child:RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10),
-                    ),
-                    child: Text("randomize",style: TextStyle(fontSize: 18)),
-                    onPressed: (){
-                      tickFields();
+                  padding: EdgeInsets.only(top: 15.0),
+                  child: AnimatedBuilder(
+                    animation: animation,
+                    builder: (BuildContext context, Widget child){
+                      return Text(
+                          animation.value.toStringAsFixed(0),
+                          style: TextStyle(fontSize: 50, fontStyle: FontStyle.italic),
+                      );
                     },
                   ),
                 ),
