@@ -2,29 +2,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:vibration/vibration.dart';
 
-void main() => runApp(Toast());
-
-class Toast extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BotToastInit(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorObservers: [BotToastNavigatorObserver()],
-        home: MyApp(),
-      ),
-    );
-  }
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lotto Field Randomizer',
+      title: 'Purple Juice',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -125,8 +111,6 @@ class _LottoFieldsState extends State<LottoFields> {
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
   List<LottoField> lf = [];
 
-  TextEditingController superTC = new TextEditingController();
-
   bool _isUIVisible = false;
 
   AnimationController controller;
@@ -168,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     }
   }
 
-  tickFields(){
+  tickFields() async{
     vibratePhone();
     setState(() {
       for(int i = 0;i <= 48;i++){
@@ -176,19 +160,21 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           lf[i].setTicked(false);
         }
       }
-      Random r = new Random();
-      int counter = 0;
-
-      do{
-        int result = r.nextInt(49);
-        if(!lf[result].isTicked()){
-          lf[result].setTicked(true);
-          counter++;
-        }
-
-      }while(counter<6);
-
     });
+    Random r = new Random();
+
+    int counter = 0;
+    do{
+      int result = r.nextInt(49);
+      if(!lf[result].isTicked()){
+        await Future.delayed(const Duration(milliseconds: 500), () {setState(() {
+          lf[result].setTicked(true);
+        });});
+        counter++;
+      }
+    }while(counter<6);
+
+
   }
 
   setSuperN(){
